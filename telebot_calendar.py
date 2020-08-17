@@ -123,7 +123,7 @@ class CallbackData:
 
 
 def create_calendar(
-    name: str = "calendar", year: int = None, month: int = None,
+    name: str = "calendar", year: int = None, month: int = None, sep: str = ":"
 ) -> InlineKeyboardMarkup:
     """
     Create a built in inline keyboard with calendar
@@ -141,7 +141,7 @@ def create_calendar(
     if month is None:
         month = now_day.month
 
-    calendar_callback = CallbackData(name, "action", "year", "month", "day")
+    calendar_callback = CallbackData(name, "action", "year", "month", "day", sep)
     data_ignore = calendar_callback.new("IGNORE", year, month, "!")
     data_months = calendar_callback.new("MONTHS", year, month, "!")
 
@@ -197,7 +197,7 @@ def create_calendar(
 
 
 def create_months_calendar(
-    name: str = "calendar", year: int = None
+    name: str = "calendar", year: int = None, sep: str = ":"
 ) -> InlineKeyboardMarkup:
     """
     Creates a calendar with month selection
@@ -210,7 +210,7 @@ def create_months_calendar(
     if year is None:
         year = datetime.datetime.now().year
 
-    calendar_callback = CallbackData(name, "action", "year", "month", "day")
+    calendar_callback = CallbackData(name, "action", "year", "month", "day", sep)
 
     keyboard = InlineKeyboardMarkup()
 
