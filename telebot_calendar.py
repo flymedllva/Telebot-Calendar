@@ -5,21 +5,23 @@ import typing
 from telebot import TeleBot
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
-MONTHS = (
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-)
-DAYS = ("Su", "Mo", "Tu", "We", "Th", "Fr", "Sa")
+MONTHS = {
+    0: ["January", "Январь"],
+    1: ["February", "Февраль"],
+    2: ["March", "Март"],
+    3: ["April", "Апрель"],
+    4: ["May", "Май"],
+    5: ["June", "Июнь"],
+    6: ["July", "Июль"],
+    7: ["August", "Август"],
+    8: ["September", "Сентябрь"],
+    9: ["October", "Октябрь"],
+    10: ["November", "Ноябрь"],
+    11: ["December", "Декабрь"]
+}
+
+DAYS_ENGLISH = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+DAYS_RUSSIAN = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 
 
 class CallbackData:
@@ -123,11 +125,12 @@ class CallbackData:
 
 
 def create_calendar(
-    name: str = "calendar", year: int = None, month: int = None,
+    name: str = "calendar", year: int = None, month: int = None, language: int = 0
 ) -> InlineKeyboardMarkup:
     """
     Create a built in inline keyboard with calendar
 
+    :param language: Language of the calendar (0 for English, 1 for Russian)
     :param name:
     :param year: Year to use in the calendar if you are not using the current year.
     :param month: Month to use in the calendar if you are not using the current month.
@@ -149,13 +152,18 @@ def create_calendar(
 
     keyboard.add(
         InlineKeyboardButton(
-            MONTHS[month - 1] + " " + str(year), callback_data=data_months
+            MONTHS[month - 1][language] + " " + str(year), callback_data=data_months
         )
     )
 
-    keyboard.add(
-        *[InlineKeyboardButton(day, callback_data=data_ignore) for day in DAYS]
-    )
+    if language == 0:
+        keyboard.add(
+            *[InlineKeyboardButton(day, callback_data=data_ignore) for day in DAYS_ENGLISH]
+        )
+    elif language == 1:
+        keyboard.add(
+            *[InlineKeyboardButton(day, callback_data=data_ignore) for day in DAYS_RUSSIAN]
+        )
 
     for week in calendar.monthcalendar(year, month):
         row = list()
@@ -186,7 +194,7 @@ def create_calendar(
             "<", callback_data=calendar_callback.new("PREVIOUS-MONTH", year, month, "!")
         ),
         InlineKeyboardButton(
-            "Cancel", callback_data=calendar_callback.new("CANCEL", year, month, "!")
+            "Cancel" if language == 0 else "Отмена", callback_data=calendar_callback.new("CANCEL", year, month, "!")
         ),
         InlineKeyboardButton(
             ">", callback_data=calendar_callback.new("NEXT-MONTH", year, month, "!")
@@ -197,13 +205,14 @@ def create_calendar(
 
 
 def create_months_calendar(
-    name: str = "calendar", year: int = None
+    name: str = "calendar", year: int = None, language: int = None
 ) -> InlineKeyboardMarkup:
     """
     Creates a calendar with month selection
 
     :param name:
     :param year:
+    :param language: Language of the calendar (0 for English, 1 for Russian)
     :return:
     """
 
@@ -214,7 +223,7 @@ def create_months_calendar(
 
     keyboard = InlineKeyboardMarkup()
 
-    for i, month in enumerate(zip(MONTHS[0::2], MONTHS[1::2])):
+    for i, month in enumerate(zip(MONTHS[0::2][language], MONTHS[1::2][language])):
         keyboard.add(
             InlineKeyboardButton(
                 month[0], callback_data=calendar_callback.new("MONTH", year, i + 1, "!")
@@ -236,6 +245,7 @@ def calendar_query_handler(
     year: int,
     month: int,
     day: int,
+    language: int
 ) -> None or datetime.datetime:
     """
     The method creates a new calendar if the forward or backward button is pressed
@@ -249,6 +259,7 @@ def calendar_query_handler(
     :param year:
     :param action:
     :param name:
+    :param language:
     :return: Returns a tuple
     """
 
@@ -268,7 +279,7 @@ def calendar_query_handler(
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
             reply_markup=create_calendar(
-                name=name, year=int(preview_month.year), month=int(preview_month.month)
+                name=name, year=int(preview_month.year), month=int(preview_month.month), language=language
             ),
         )
         return None
@@ -279,7 +290,7 @@ def calendar_query_handler(
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
             reply_markup=create_calendar(
-                name=name, year=int(next_month.year), month=int(next_month.month)
+                name=name, year=int(next_month.year), month=int(next_month.month), language=language
             ),
         )
         return None
@@ -288,7 +299,7 @@ def calendar_query_handler(
             text=call.message.text,
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
-            reply_markup=create_months_calendar(name=name, year=current.year),
+            reply_markup=create_months_calendar(name=name, year=current.year, language=language),
         )
         return None
     elif action == "MONTH":
@@ -296,7 +307,7 @@ def calendar_query_handler(
             text=call.message.text,
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
-            reply_markup=create_calendar(name=name, year=int(year), month=int(month)),
+            reply_markup=create_calendar(name=name, year=int(year), month=int(month), language=language),
         )
         return None
     elif action == "CANCEL":

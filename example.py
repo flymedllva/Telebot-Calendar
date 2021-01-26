@@ -31,9 +31,10 @@ def check_other_messages(message):
         message.chat.id,
         "Selected date",
         reply_markup=telebot_calendar.create_calendar(
-            name=calendar_1.prefix,
+            name=calendar_1.prefix, # Specify the NAME of your calendar
             year=now.year,
-            month=now.month,  # Specify the NAME of your calendar
+            month=now.month,
+            language=0, # language: 0 for English, 1 for Russian
         ),
     )
 
