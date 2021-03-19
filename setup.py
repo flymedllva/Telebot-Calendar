@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="telebot-calendar",
-    version="1.1",
+    version="1.2",
     packages=[""],
     url="https://github.com/FlymeDllVa/telebot-calendar",
     license="MIT",
@@ -10,5 +10,7 @@ setup(
     author="FlymeDllVa",
     author_email="flymedllva@gmail.com",
     description="Simple calendar for Telebot",
-    install_requires=["pyTelegramBotAPI",],
+    install_requires=[
+        "pyTelegramBotAPI",
+    ],
 )
