@@ -6,20 +6,20 @@ from telebot import TeleBot
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 MONTHS = (
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
 )
-DAYS = ("Su", "Mo", "Tu", "We", "Th", "Fr", "Sa")
+DAYS = ("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
 
 
 class CallbackData:
@@ -186,7 +186,7 @@ def create_calendar(
             "<", callback_data=calendar_callback.new("PREVIOUS-MONTH", year, month, "!")
         ),
         InlineKeyboardButton(
-            "Cancel", callback_data=calendar_callback.new("CANCEL", year, month, "!")
+            "Отмена", callback_data=calendar_callback.new("CANCEL", year, month, "!")
         ),
         InlineKeyboardButton(
             ">", callback_data=calendar_callback.new("NEXT-MONTH", year, month, "!")
