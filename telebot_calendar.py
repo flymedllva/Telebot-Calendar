@@ -19,7 +19,7 @@ MONTHS = (
     "November",
     "December",
 )
-DAYS = ("Su", "Mo", "Tu", "We", "Th", "Fr", "Sa")
+DAYS = ("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")
 
 
 class CallbackData:
