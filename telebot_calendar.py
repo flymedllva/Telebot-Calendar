@@ -11,6 +11,7 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQu
 class Language:
     days: tuple
     months: tuple
+    cancel: str
 
 
 ENGLISH_LANGUAGE = Language(
@@ -29,6 +30,7 @@ ENGLISH_LANGUAGE = Language(
         "November",
         "December",
     ),
+    cancel="CANCEL",
 )
 
 RUSSIAN_LANGUAGE = Language(
@@ -47,6 +49,7 @@ RUSSIAN_LANGUAGE = Language(
         "Ноябрь",
         "Декабрь",
     ),
+    cancel="ОТМЕНА",
 )
 
 
@@ -136,7 +139,7 @@ class Calendar:
                 callback_data=calendar_callback.new("PREVIOUS-MONTH", year, month, "!"),
             ),
             InlineKeyboardButton(
-                "Cancel",
+                self.__lang.cancel,
                 callback_data=calendar_callback.new("CANCEL", year, month, "!"),
             ),
             InlineKeyboardButton(
